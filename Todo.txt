@@ -1,0 +1,36 @@
+Separations:
+Customer
+Admin
+Employee
+
+Features:
+Customer - 
+    Deposit
+    Withdraw
+        Set withdraw limits
+    Transfer Money
+    Open New account
+    -Maybe
+    -Credit
+Admin - 
+    See all DB tables
+        See all accounts
+        see all activity on accounts
+        See all User Names, SOME login information
+    See data like total amount in bank
+        See total credit lent 
+        See total transactions daily or monthy or hourly 
+    Be able to edit DB tables directly 
+    BE able to Add tables
+    Be able to refactor DB
+
+Employee - 
+    Pull access to Customer account 
+    See activity
+        See balnce
+        see all accounts and credit
+        see dates for transactions
+        Process big withdraws
+
+
+
