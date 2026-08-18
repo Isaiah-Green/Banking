@@ -9,6 +9,5 @@ class Customer:
         self.credit_score = 0
         self._accounts = []
     ####Functions that All Users will have access to
-    def me(self):
-        pass
+    
     
