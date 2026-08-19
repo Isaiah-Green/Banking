@@ -26,7 +26,7 @@ class account:
         self.dates = information[16]
     def add_bal(self, amount):
         now = datetime.datetime.now()
-        self.dates.update({now : "Add Balance"})
+        self.dates.update({now : f"Add Balance: {amount}"})
         if validate_int(amount):
             self.balance += amount
             return True
@@ -34,7 +34,7 @@ class account:
             return False
     def remove_bal(self, amount):
         now = datetime.datetime.now()
-        self.dates.update({now : "Remove Balance"})
+        self.dates.update({now : f"Remove Balance: {amount}"})
         if validate_int(amount):
             self.balance -= amount
             return True
