@@ -1,15 +1,5 @@
 import random
 import datetime
-def validate_string(input_val):
-    if isinstance(input_val, str):
-        return True
-    else:
-        return False
-def validate_int(input_val):
-    if isinstance(input_val, int):
-        return True
-    else:
-        return False
 class account:
     def __init__(self, user_id, accountType):
         self._User_Id = user_id
@@ -24,10 +14,20 @@ class account:
         self.account_num = information[5]
         self.balance = information[12]
         self.dates = information[16]
+    def validate_string(self , input_val):
+        if isinstance(input_val, str):
+            return True
+        else:
+            return False
+    def validate_int(self, input_val):
+        if isinstance(input_val, int):
+            return True
+        else:
+            return False
     def add_bal(self, amount):
         now = datetime.datetime.now()
         self.dates.update({now : f"Add Balance: {amount}"})
-        if validate_int(amount):
+        if self.validate_int(amount):
             self.balance += amount
             return True
         else:
@@ -35,7 +35,7 @@ class account:
     def remove_bal(self, amount):
         now = datetime.datetime.now()
         self.dates.update({now : f"Remove Balance: {amount}"})
-        if validate_int(amount):
+        if self.validate_int(amount):
             self.balance -= amount
             return True
         else:
@@ -43,7 +43,7 @@ class account:
     def change_type(self, accountType):
         now = datetime.datetime.now()
         self.dates.update({now : "Change Account Type"})
-        if validate_string(accountType):
+        if self.validate_string(accountType):
             if (accountType == "Savings" or "Checking" or "Credit"):
                 self.accountType = accountType
                 return True
@@ -61,7 +61,6 @@ class account:
 
 '''
 Testing
-
 imported_account = "[UserID: 765243897 , Account Number: 3165 , Account Type: Credit , Balance: 854000 , Dates Accessed: ]"
 my_account = account(879657889 , "Checking")
 print(my_account.print_acc())
