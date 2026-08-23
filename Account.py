@@ -1,11 +1,12 @@
 import random
 import datetime
 class account:
-    def __init__(self, user_id, accountType):
+    def __init__(self, user_id, accountType ,withdraw = 0.0):
         self._User_Id = user_id
         self.account_num = random.randint(1000, 9999)
         self.accountType = accountType
         self.balance = 0.0
+        self.withdrawlim = withdraw
         self.dates = {}
     def account_import(self, accountTextLine):
         information = accountTextLine.split(" ")
@@ -13,7 +14,9 @@ class account:
         self.accountType = information[9]
         self.account_num = information[5]
         self.balance = information[12]
-        self.dates = information[16]
+        self.withdrawlim = information[16]
+        self.dates = information[20]
+
     def validate_string(self , input_val):
         if isinstance(input_val, str):
             return True
@@ -49,6 +52,10 @@ class account:
                 return True
         else:
             return False
+    def get_withdraw(self):
+        return self.withdrawlim
+    def set_withdraw(self, int):
+        self.withdrawlim = int
     def get_bal(self):
         return self.balance
     def get_accountType(self):
@@ -56,12 +63,12 @@ class account:
     def get_accountNumber(self):
         return self.account_num
     def print_acc(self):
-        return f"[UserID: {self._User_Id} , Account Number: {self.account_num} , Account Type: {self.accountType} , Balance: {self.balance} , Dates Accessed: {self.dates}]"
+        return f"[UserID: {self._User_Id} , Account Number: {self.account_num} , Account Type: {self.accountType} , Balance: {self.balance} , WithDraw Limit: {self.withdrawlim} , Dates Altered: {self.dates}]"
 
 
 '''
 Testing
-imported_account = "[UserID: 765243897 , Account Number: 3165 , Account Type: Credit , Balance: 854000 , Dates Accessed: ]"
+imported_account = "[UserID: 765243897 , Account Number: 3165 , Account Type: Credit , Balance: 854000 , Withdraw Limit: 300 , Dates Accessed: ]"
 my_account = account(879657889 , "Checking")
 print(my_account.print_acc())
 my_account.add_bal(6000)

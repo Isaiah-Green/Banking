@@ -11,15 +11,12 @@ class Customer:
             self._User_ID = userID
         self.credit_borrow = 0.0
         self.credit_score = 0
-        self._withdraw_limit = 0.0
         self._accounts = []
     ####Functions that All Users will have access to
     def open_account(self , accountType, withdrawLim):
         if withdrawLim < 0:
-            self._withdraw_limit = 0.0
-        else:
-            self._withdraw_limit = withdrawLim
-        acct = account(self._User_ID,accountType)
+            withdrawLim = 0.0
+        acct = account(self._User_ID,accountType, withdrawLim)
         self._accounts.append(acct)
         ## write into database 
     def close_account(self, accountNum, accountType):
@@ -50,10 +47,18 @@ class Customer:
                 t = self._accounts[i].print_acc()
                 print(t)
                 print(f"----------------------------------------") 
-    def set_withdraw_limit(self, limit):
-        self._withdraw_limit = limit
-    def get_withdraw_limit(self):
-        return self._withdraw_limit
+    def set_withdraw_limit(self, accNum , limit):
+        for i in range (len(self._accounts)):
+            y = self._accounts[i].get_accountNumber()
+            if y == accNum:
+                self._accounts[i].set_withdraw(limit)
+    def get_withdraw_limit(self , accNum):
+        t = 0.0
+        for i in range (len(self._accounts)):
+            y = self._accounts[i].get_accountNumber()
+            if y == accNum:
+                t = self._accounts[i].get_withdraw()
+        return t
     ##for testing currently
     def get_acct_num(self):
         t = []
@@ -64,7 +69,9 @@ class Customer:
 
     
 '''
+
 Testing 
+
 customer = Customer(username="Igreen" , password="Indig0")
 customer.open_account("Checking" , 500)
 customer.open_account("Savings" , 100)
@@ -73,5 +80,11 @@ y = customer.get_acct_num()
 customer.change_accountType("Checking" , y[1])
 customer.view_one_account(y[1])
 customer.close_account(y[1] , "Checking")
+customer.view_accounts()
+print(customer.get_withdraw_limit(y[0]))
+customer.open_account("Savings" , 1000)
+y = customer.get_acct_num()
+print(customer.get_withdraw_limit(y[1]))
+customer.set_withdraw_limit(y[1], 200)
 customer.view_accounts()
 '''
