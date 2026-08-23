@@ -4,7 +4,7 @@ from Account import account
 class Customer:
     def __init__(self , username, password , userID = None):
         self._User_Name = username
-        self._Password = password
+        self._password = password
         if userID == None:
             self._User_ID = random.randint(100000000 , 999999999)
         else:
@@ -12,6 +12,24 @@ class Customer:
         self.credit_borrow = 0.0
         self.credit_score = 0
         self._accounts = []
+    #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score:  , Accounts: {} | {} | {} | {}]  
+    def load_customer(self , DBLine):
+        information = DBLine.split(" ")
+        self.userID = information[1]
+        t = len(information) #18 standard with no accounts
+        if t > 18:
+            y = 18
+            for i in range(t - 19):
+                if y > len(information):
+                    break
+                else:
+                    self._accounts.append(information[y])
+                    y += 2
+        self.credit_borrow = information[11]
+        self.credit_score = information[15]
+        self._User_Name = information[4]
+        self._password = information[7]
+
     ####Functions that All Users will have access to
     def open_account(self , accountType, withdrawLim):
         if withdrawLim < 0:
@@ -24,7 +42,7 @@ class Customer:
             if self._accounts[i].get_accountNumber()  == accountNum and self._accounts[i].get_accountType() == accountType:
                 self._accounts.pop(i)
                 break
-        ### Go in to the database and remove dthis entry 
+        ### Go in to the database and remove this entry 
     def change_accountType(self, newType, accountNum):
         for i in range(len(self._accounts)):
             if self._accounts[i].get_accountNumber()  == accountNum:
@@ -69,9 +87,7 @@ class Customer:
 
     
 '''
-
 Testing 
-
 customer = Customer(username="Igreen" , password="Indig0")
 customer.open_account("Checking" , 500)
 customer.open_account("Savings" , 100)
@@ -87,4 +103,5 @@ y = customer.get_acct_num()
 print(customer.get_withdraw_limit(y[1]))
 customer.set_withdraw_limit(y[1], 200)
 customer.view_accounts()
+Loaded_customer = "[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145 , Accounts:]"
 '''
