@@ -1,7 +1,7 @@
 import random
 import datetime
 class account:
-    def __init__(self, user_id, accountType ,withdraw = 0.0):
+    def __init__(self, user_id, accountType=None ,withdraw = 0.0):
         self._User_Id = user_id
         self.account_num = random.randint(1000, 9999)
         self.accountType = accountType

@@ -1,8 +1,20 @@
 import random
 import datetime
 from Account import account
+
+def Make_accountList(TextFile , userID):
+    temp = []
+    try:
+        with open(TextFile , "r") as f:
+            for line in f:
+                y = line.split(" ")
+                if int(y[1]) == userID:
+                    temp.append(line)
+    except FileNotFoundError:
+        print("Error: The file does not exist.")
+    return temp
 class Customer:
-    def __init__(self , username, password , userID = None):
+    def __init__(self , username=None, password= None, userID = None):
         self._User_Name = username
         self._password = password
         if userID == None:
@@ -12,24 +24,19 @@ class Customer:
         self.credit_borrow = 0.0
         self.credit_score = 0
         self._accounts = []
-    #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score:  , Accounts: {} | {} | {} | {}]  
-    def load_customer(self , DBLine):
+    #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score: ]  
+    def load_customer(self , DBLine , AccountDBLineList):
         information = DBLine.split(" ")
         self.userID = information[1]
-        t = len(information) #18 standard with no accounts
-        if t > 18:
-            y = 18
-            for i in range(t - 19):
-                if y > len(information):
-                    break
-                else:
-                    self._accounts.append(information[y])
-                    y += 2
         self.credit_borrow = information[11]
         self.credit_score = information[15]
         self._User_Name = information[4]
         self._password = information[7]
-
+        for item in AccountDBLineList:
+            y = item.split(" ")
+            temp_account = account(self._User_ID)
+            temp_account.account_import(item)
+            self._accounts.append(temp_account)
     ####Functions that All Users will have access to
     def open_account(self , accountType, withdrawLim):
         if withdrawLim < 0:
@@ -103,5 +110,10 @@ y = customer.get_acct_num()
 print(customer.get_withdraw_limit(y[1]))
 customer.set_withdraw_limit(y[1], 200)
 customer.view_accounts()
-Loaded_customer = "[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145 , Accounts:]"
+Loaded_customer = "[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]"
+customer2 =Customer()
+print("-----------------------------")
+list = Make_accountList("testing_accountfile" , 876546756)
+customer2.load_customer("[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]", list)
+customer2.view_accounts()
 '''
