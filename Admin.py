@@ -108,7 +108,8 @@ class Admin:
                     new_f = f.readlines()
                     f.seek(0)
                     for line in new_f:
-                        if not line[0 : 2] == userID:
+                        y = line.split(" ")
+                        if not y[1] == str(userID):
                             f.write(line)
                     f.truncate()
                     return {"Sucess" : True}
@@ -120,7 +121,8 @@ class Admin:
                 new_f = f.readlines()
                 f.seek(0)
                 for line in new_f:
-                    if not line[0 : 2] == userID:
+                    y = line.split(" ")
+                    if  not y[1] == str(userID):
                         f.write(line)
                 f.truncate()
                 t = self.close_accounts(userID)
@@ -131,7 +133,7 @@ class Admin:
 
 '''
 Testing
-admin = Admin("ilikegrapes0" , "ihategrapes0" , 1234 , "cus_file" , "acc_file" , "test_file")
+admin = Admin("ilikegrapes0" , "ihategrapes0" , 1234 , "cus_file" , "acc_file" , "admin_file")
 admin.See_DB_customer()
 print("---------------------------------------------")
 admin.See_DB_account()
