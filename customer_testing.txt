@@ -1,0 +1,7 @@
+[UserID: 123438767  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 100]
+[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]
+[UserID: 926739846  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]
+[UserID: 765243897  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]
+[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 212]
+[UserID: 450183740  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]
+[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 890]

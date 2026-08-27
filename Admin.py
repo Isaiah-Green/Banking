@@ -8,14 +8,14 @@ class Admin:
         self.cus_file = cus_file
         self.admin_file = admin_file
         self.acc_file = acc_file
-        self.total_in_bank = 0.0
+        self.total_in_acc = 0.0
         self.total_credit = 0.0
-        self.last_updated = datetime.now()
+        self.last_updated = datetime.datetime.now()
     #function to see entire Cutomer DB file
     #format = [UserName:  , Password: , AdminID: , Customer FIle: , acc_file:  , admin File:  , total: , total credit: , last updated:  , refresh: ](temporary to store the files once DB is properly made wont save 3 diff ones just one big one)
-    def load_admin(self, userName, password , AdminID):
+    def load_admin(self, userName, password , AdminID , admin_file):
         try:
-            with open(self.admin_file , "r") as f:
+            with open(admin_file , "r") as f:
                 for line in f:
                     y = line.split(" ")
                     if y[1] == userName and y[4] == password and y[7] == AdminID:
@@ -55,11 +55,12 @@ class Admin:
         try:
             with open(self.acc_file, "r") as f:
                 for line in f:
+                    y = line.split(" ")
                     if y[9] == "Savings" or y[9] == "Checking":
                         y = line.split(" ")
-                        temp += y[12]
-                self.total_in_bank = temp
-                return {"Sucess" : True , "Total" : self.total_in_bank}
+                        temp += int(y[12])
+                self.total_in_acc = temp
+                return {"Sucess" : True , "Total" : self.total_in_acc}
         except FileNotFoundError:
             return {"Sucess" : False}
     #function to see current aount of credit loaned out
@@ -68,15 +69,16 @@ class Admin:
             try:
                 with open(self.acc_file, "r") as f:
                     for line in f:
+                        y = line.split(" ")
                         if y[9] == "Credit":
                             y = line.split(" ")
-                            temp += y[12]
+                            temp += int(y[12])
                     self.total_credit = temp
                     return {"Sucess" : True , "Total" : self.total_credit}
             except FileNotFoundError:
                 return {"Sucess" : False}
     def get_last_total_in_bank(self):
-        return self.total_in_bank
+        return self.total_in_acc
     def get_last_total_credit(self):
         return self.total_credit
     #function to enter a userID and pull up all accounts associated with them and their customer function entry
@@ -85,14 +87,13 @@ class Admin:
             with open(self.cus_file , "r") as f:
                 for line in f:
                     y = line.split(" ")
-                    if y[1] == userID:
+                    if y[1] == str(userID):
                         print(line)
-                        break
                 try:
                     with open(self.acc_file, "r") as f:
                         for line in f:
                             y = line.split(" ")
-                            if y[1] == userID:
+                            if y[1] == str(userID):
                                 print(line)
                         return {"Sucess" : True}
                 except FileNotFoundError:
@@ -101,3 +102,46 @@ class Admin:
             return {"Sucess" : False}
     #function to reset credentials for himself(maybe)
     #function to cloes accounts
+    def close_accounts(self, userID):
+        try: 
+            with open(self.acc_file,"r+") as f:
+                    new_f = f.readlines()
+                    f.seek(0)
+                    for line in new_f:
+                        if not line[0 : 2] == userID:
+                            f.write(line)
+                    f.truncate()
+                    return {"Sucess" : True}
+        except:
+            return {"Sucess": False}
+    def close_account(self, userID):
+        try: 
+            with open(self.cus_file,"r+") as f:
+                new_f = f.readlines()
+                f.seek(0)
+                for line in new_f:
+                    if not line[0 : 2] == userID:
+                        f.write(line)
+                f.truncate()
+                t = self.close_accounts(userID)
+                if t["Sucess"]:
+                    return {"Sucess" : True}
+        except:
+            return {"Sucess": False}
+
+'''
+Testing
+admin = Admin("ilikegrapes0" , "ihategrapes0" , 1234 , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\customer_testing.txt" , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\testing_account.txt" , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\aadmin_testing.txt")
+admin.See_DB_customer()
+print("---------------------------------------------")
+admin.See_DB_account()
+print(admin.total_credit_lent())
+print(admin.total_in_bank())
+print("---------------------------------------------")
+admin.lookup_user(876546756)
+print(admin.close_account(876546756))
+print("---------------------------------------------")
+admin.See_DB_customer()
+print("---------------------------------------------")
+admin.See_DB_account()
+'''
