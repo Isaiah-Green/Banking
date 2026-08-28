@@ -100,7 +100,22 @@ class Admin:
                     return {"Sucess" : False}
         except FileNotFoundError:
             return {"Sucess" : False}
+    #write to DB
+    def write_admin(self):
+        try:
+            with open(self.admin_file, "r") as f:
+                for line in f:
+                    y = line.split(" ")
+                    if y[1] == self.userName and y[4] == self.password and y[7] == self.AdminID:
+                        return {"Sucess" : True}
+                with open(self.admin_file, "w" , encoding= 'utf=8') as f:
+                    f.write(f"[UserName: {self.userName} , Password: {self.password} , AdminID: {self.AdminID} , Customer FIle: {self.cus_file}, acc_file: {self.acc_file}  , admin File: {self.admin_file} , total: {self.total_in_acc} , total credit: {self.total_credit} , last updated: {self.last_updated}]")
+                    return {"Sucess": True}
+        except:
+            return {"Sucess": False}
     #function to reset credentials for himself(maybe)
+    def reset_password(self, userName, AdminID):
+        pass
     #function to cloes accounts
     def close_accounts(self, userID):
         try: 
@@ -115,7 +130,7 @@ class Admin:
                     return {"Sucess" : True}
         except:
             return {"Sucess": False}
-    def close_account(self, userID):
+    def close_customer(self, userID):
         try: 
             with open(self.cus_file,"r+") as f:
                 new_f = f.readlines()
@@ -133,17 +148,18 @@ class Admin:
 
 '''
 Testing
-admin = Admin("ilikegrapes0" , "ihategrapes0" , 1234 , "cus_file" , "acc_file" , "admin_file")
+'''
+admin = Admin("ilikegrapes0" , "ihategrapes0" , 1234 , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\customer_testing.txt" , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\testing_account.txt" , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\aadmin_testing.txt")
 admin.See_DB_customer()
+print(admin.write_admin())
 print("---------------------------------------------")
 admin.See_DB_account()
 print(admin.total_credit_lent())
 print(admin.total_in_bank())
 print("---------------------------------------------")
 admin.lookup_user(876546756)
-print(admin.close_account(876546756))
+print(admin.close_customer(876546756))
 print("---------------------------------------------")
 admin.See_DB_customer()
 print("---------------------------------------------")
 admin.See_DB_account()
-'''
