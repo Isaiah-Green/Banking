@@ -149,7 +149,7 @@ class Admin:
 '''
 Testing
 '''
-admin = Admin("ilikegrapes0" , "ihategrapes0" , 1234 , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\customer_testing.txt" , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\testing_account.txt" , "C:\\Users\\Isaiah\\Desktop\\Bank(surelythistime)\\Banking\\aadmin_testing.txt")
+admin = Admin("ilikegrapes0" , "ihategrapes0" , 1234 , "customer_testing.txt" , "testing_account.txt" , "aadmin_testing.txt")
 admin.See_DB_customer()
 print(admin.write_admin())
 print("---------------------------------------------")
