@@ -14,29 +14,25 @@ def Make_accountList(TextFile , userID):
         print("Error: The file does not exist.")
     return temp
 class Customer:
-    def __init__(self , username=None, password= None, userID = None):
-        self._User_Name = username
-        self._password = password
+    def __init__(self , username=None, password= None, userID = None , DB_URL= None, DB_API = None):
+        self.User_Name = username
+        self.password = password
         if userID == None:
             self._User_ID = random.randint(100000000 , 999999999)
         else:
             self._User_ID = userID
         self.credit_borrow = 0.0
         self.credit_score = 0
-        self._accounts = []
+        self.data_base_url = DB_URL 
+        self.data_base_api = DB_API
     #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score: ]  
-    def load_customer(self , DBLine , AccountDBLineList):
+    def load_customer(self , DBLine):
         information = DBLine.split(" ")
         self.userID = information[1]
         self.credit_borrow = information[11]
         self.credit_score = information[15]
         self._User_Name = information[4]
         self._password = information[7]
-        for item in AccountDBLineList:
-            y = item.split(" ")
-            temp_account = account(self._User_ID)
-            temp_account.account_import(item)
-            self._accounts.append(temp_account)
     ####Functions that All Users will have access to
     def open_account(self , accountType, withdrawLim):
         if withdrawLim < 0:
@@ -44,6 +40,8 @@ class Customer:
         acct = account(self._User_ID,accountType, withdrawLim)
         self._accounts.append(acct)
         ## write into database 
+    ############FIXME!!!!!!!!!!!!!!!#########
+    #### From here on down these functions need to be altered to work with the DB(it will call the DB and look up the accounts form the tab le for these functions)
     def close_account(self, accountNum, accountType):
         for i in range(len(self._accounts)):
             if self._accounts[i].get_accountNumber()  == accountNum and self._accounts[i].get_accountType() == accountType:
@@ -91,6 +89,7 @@ class Customer:
             y = self._accounts[i].get_accountNumber()
             t.append(y)
         return t
+    
 
     
 '''
@@ -116,4 +115,23 @@ print("-----------------------------")
 list = Make_accountList("testing_accountfile" , 876546756)
 customer2.load_customer("[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]", list)
 customer2.view_accounts()
+
+import os
+from dotenv import load_dotenv
+from supabase import create_client, Client
+
+load_dotenv()
+url: str = os.environ.get("DATABASE_URL")
+key: str = os.environ.get("DATABASE_API")
+
+supabase: Client = create_client(url, key)
+
+def add_entry(Customer):
+    response = supabase.table("Customer-List").insert({
+        Customer.: "First Entry",
+        ""  # Works directly with date[] columns
+    }).execute()
+    
+    print("Inserted:", response.data)
+
 '''
