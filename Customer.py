@@ -1,20 +1,18 @@
 import random
 import datetime
 from Account import account
+import os
+from dotenv import load_dotenv
+from supabase import create_client, Client
 
-def Make_accountList(TextFile , userID):
-    temp = []
-    try:
-        with open(TextFile , "r") as f:
-            for line in f:
-                y = line.split(" ")
-                if int(y[1]) == userID:
-                    temp.append(line)
-    except FileNotFoundError:
-        print("Error: The file does not exist.")
-    return temp
+load_dotenv()
+url: str = os.environ.get("DATABASE_URL")
+key: str = os.environ.get("DATABASE_API_SECRET")
+
+supabase: Client = create_client(url, key)
+
 class Customer:
-    def __init__(self , username=None, password= None, userID = None , DB_URL= None, DB_API = None):
+    def __init__(self , username=None, password= None, userID = None , entry_number = 0):
         self.User_Name = username
         self.password = password
         if userID == None:
@@ -23,115 +21,61 @@ class Customer:
             self._User_ID = userID
         self.credit_borrow = 0.0
         self.credit_score = 0
-        self.data_base_url = DB_URL 
-        self.data_base_api = DB_API
+        self.add_entry(entry_number)
     #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score: ]  
-    def load_customer(self , DBLine):
-        information = DBLine.split(" ")
-        self.userID = information[1]
-        self.credit_borrow = information[11]
-        self.credit_score = information[15]
-        self._User_Name = information[4]
-        self._password = information[7]
+    def load_customer(self , userName = None, password = None):
+        response = supabase.table("Customer-List").select("*").eq("UserName" , userName).eq("Password" , password).execute()
+        self._User_ID = response.data[0]["UserID"]
+        self.User_Name = response.data[0]["UserName"]
+        self.password = response.data[0]["Password"]
+        self.credit_borrow = response.data[0]["Credit-Borrowed"]
+        self.credit_score = response.data[0]["Credit-Score"]
     ####Functions that All Users will have access to
     def open_account(self , accountType, withdrawLim):
-        if withdrawLim < 0:
-            withdrawLim = 0.0
-        acct = account(self._User_ID,accountType, withdrawLim)
-        self._accounts.append(acct)
-        ## write into database 
-    ############FIXME!!!!!!!!!!!!!!!#########
-    #### From here on down these functions need to be altered to work with the DB(it will call the DB and look up the accounts form the tab le for these functions)
+        response = supabase.table("Accounts").insert({
+            "UserID": self._User_ID,
+            "Account-Number": random.randint(1000, 9999), 
+            "Account-Type": accountType,
+            "Balance":  0.0,
+            "Withdraw-Limit": withdrawLim
+        }).execute()
+    def add_entry(self , int):
+        if int > 0 :
+            response = supabase.table("Customer-List").insert({
+                "UserID": self._User_ID ,
+                "UserName":  self.User_Name,
+                "Password" : self.password,
+                "Credit-Borrowed": self.credit_borrow,
+                "Credit-Score": self.credit_score
+            }).execute()
+        else:
+            return 
     def close_account(self, accountNum, accountType):
-        for i in range(len(self._accounts)):
-            if self._accounts[i].get_accountNumber()  == accountNum and self._accounts[i].get_accountType() == accountType:
-                self._accounts.pop(i)
-                break
+        response = supabase.table("Accounts").delete().eq("UserID" , self._User_ID).eq("Account-Number" , accountNum).eq("Account-Type" , accountType).execute()
         ### Go in to the database and remove this entry 
     def change_accountType(self, newType, accountNum):
-        for i in range(len(self._accounts)):
-            if self._accounts[i].get_accountNumber()  == accountNum:
-                self._accounts[i].change_type(newType)
+        response = supabase.table("Accounts").update({"Account-Type": newType}).eq("UserID" , self._User_ID).eq("Account-Number" , accountNum).execute()
         ### Go in to the database and update this information
     def view_accounts(self):
-        for i in range(len(self._accounts)):
-            print(f"----------------------------------------")
-            print(f" Account {i}: ")
-            t = self._accounts[i].print_acc()
-            print(t)
-            print(f"----------------------------------------")
-    def get_accounts(self):
-        return self._accounts 
+         response = supabase.table("Accounts").select("*").eq("UserID", self._User_ID).execute()
+         return response.data
     def view_one_account(self, accountNum):
-        for i in range(len(self._accounts)):
-            if self._accounts[i].get_accountNumber() == accountNum:
-                print(f"----------------------------------------")
-                print(f" Account {self._accounts[i].get_accountNumber()}: ")
-                t = self._accounts[i].print_acc()
-                print(t)
-                print(f"----------------------------------------") 
-    def set_withdraw_limit(self, accNum , limit):
-        for i in range (len(self._accounts)):
-            y = self._accounts[i].get_accountNumber()
-            if y == accNum:
-                self._accounts[i].set_withdraw(limit)
-    def get_withdraw_limit(self , accNum):
-        t = 0.0
-        for i in range (len(self._accounts)):
-            y = self._accounts[i].get_accountNumber()
-            if y == accNum:
-                t = self._accounts[i].get_withdraw()
-        return t
+         response = supabase.table("Accounts").select("*").eq("UserID", self._User_ID).eq("Account=Number" , accountNum).execute()
+         return response.data
     ##for testing currently
-    def get_acct_num(self):
-        t = []
-        for i in range(len(self._accounts)):
-            y = self._accounts[i].get_accountNumber()
-            t.append(y)
-        return t
-    
 
     
 '''
 Testing 
-customer = Customer(username="Igreen" , password="Indig0")
-customer.open_account("Checking" , 500)
-customer.open_account("Savings" , 100)
-customer.view_accounts()
-y = customer.get_acct_num()
-customer.change_accountType("Checking" , y[1])
-customer.view_one_account(y[1])
-customer.close_account(y[1] , "Checking")
-customer.view_accounts()
-print(customer.get_withdraw_limit(y[0]))
-customer.open_account("Savings" , 1000)
-y = customer.get_acct_num()
-print(customer.get_withdraw_limit(y[1]))
-customer.set_withdraw_limit(y[1], 200)
-customer.view_accounts()
-Loaded_customer = "[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]"
-customer2 =Customer()
-print("-----------------------------")
-list = Make_accountList("testing_accountfile" , 876546756)
-customer2.load_customer("[UserID: 876546756  , UserName: Igreen   , Password: Indig0 , Credit Borrowed: 200 , Credit Score: 145]", list)
-customer2.view_accounts()
 
-import os
-from dotenv import load_dotenv
-from supabase import create_client, Client
+customer1 = Customer(username="WHOLETTHEDOG789*" , password="Ontheway64298!" , entry_number= 1)
+customer2 = Customer(entry_number=0)
+customer2.load_customer(userName="HImmers43#" , password="Twisteronthe54%")
 
-load_dotenv()
-url: str = os.environ.get("DATABASE_URL")
-key: str = os.environ.get("DATABASE_API")
+customer1.open_account(accountType="Checking" , withdrawLim= 500)
+print(customer1.view_accounts())
 
-supabase: Client = create_client(url, key)
-
-def add_entry(Customer):
-    response = supabase.table("Customer-List").insert({
-        Customer.: "First Entry",
-        ""  # Works directly with date[] columns
-    }).execute()
-    
-    print("Inserted:", response.data)
-
+customer2.open_account(accountType="Savings" , withdrawLim= 100)
+print(customer2.view_accounts())
 '''
+
