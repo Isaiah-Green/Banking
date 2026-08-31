@@ -16,16 +16,16 @@ class Customer:
         self.User_Name = username
         self.password = password
         if userID == None:
-            self._User_ID = random.randint(100000000 , 999999999)
+            self.User_ID = random.randint(100000000 , 999999999)
         else:
-            self._User_ID = userID
+            self.User_ID = userID
         self.credit_borrow = 0.0
         self.credit_score = 0
         self.add_entry(entry_number)
     #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score: ]  
     def load_customer(self , userName = None, password = None):
         response = supabase.table("Customer-List").select("*").eq("UserName" , userName).eq("Password" , password).execute()
-        self._User_ID = response.data[0]["UserID"]
+        self.User_ID = response.data[0]["UserID"]
         self.User_Name = response.data[0]["UserName"]
         self.password = response.data[0]["Password"]
         self.credit_borrow = response.data[0]["Credit-Borrowed"]
@@ -33,7 +33,7 @@ class Customer:
     ####Functions that All Users will have access to
     def open_account(self , accountType, withdrawLim):
         response = supabase.table("Accounts").insert({
-            "UserID": self._User_ID,
+            "UserID": self.User_ID,
             "Account-Number": random.randint(1000, 9999), 
             "Account-Type": accountType,
             "Balance":  0.0,
@@ -42,7 +42,7 @@ class Customer:
     def add_entry(self , int):
         if int > 0 :
             response = supabase.table("Customer-List").insert({
-                "UserID": self._User_ID ,
+                "UserID": self.User_ID ,
                 "UserName":  self.User_Name,
                 "Password" : self.password,
                 "Credit-Borrowed": self.credit_borrow,

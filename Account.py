@@ -1,22 +1,31 @@
 import random
 import datetime
-class account:
-    def __init__(self, user_id, accountType=None ,withdraw = 0.0):
-        self._User_Id = user_id
-        self.account_num = random.randint(1000, 9999)
-        self.accountType = accountType
-        self.balance = 0.0
-        self.withdrawlim = withdraw
-        self.dates = {}
-    def account_import(self, accountTextLine):
-        information = accountTextLine.split(" ")
-        self._User_Id = information[1]
-        self.accountType = information[9]
-        self.account_num = information[5]
-        self.balance = information[12]
-        self.withdrawlim = information[16]
-        self.dates = information[20]
+import os
+from dotenv import load_dotenv
+from supabase import create_client, Client
+import json
+from datetime import datetime, timezone
 
+def datetime_converter(obj):
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    raise TypeError(f"Type {type(obj)} not serializable")
+
+load_dotenv()
+url: str = os.environ.get("DATABASE_URL")
+key: str = os.environ.get("DATABASE_API_SECRET")
+
+supabase: Client = create_client(url, key)
+
+class account:
+    def __init__(self, user_id, accountType=None , accountNum = None):
+        self._User_Id = user_id
+        response = supabase.table("Accounts").select("*").eq("UserID" , user_id).eq("Account-Type" , accountType).eq("Account-Number", accountNum).execute()
+        self.account_num = response.data[0]["Account-Number"]
+        self.accountType = accountType
+        self.balance = response.data[0]["Balance"]
+        self.withdrawlim = response.data[0]["Withdraw-Limit"]
+        self.dates = response.data[0]["Dates-Accessed"]
     def validate_string(self , input_val):
         if isinstance(input_val, str):
             return True
@@ -27,57 +36,44 @@ class account:
             return True
         else:
             return False
+    def update_withdraw(self , new_withdraw):
+        self.withdrawlim = new_withdraw
+        response = supabase
     def add_bal(self, amount):
-        now = datetime.datetime.now()
-        self.dates.update({now : f"Add Balance: {amount}"})
         if self.validate_int(amount):
-            self.balance += amount
-            return True
+            if amount > 0:
+                self.balance += amount
+                return {"Sucess": True}
+            else:
+                return {"Sucess": False}
         else:
-            return False
+            return {"Sucess": False}
     def remove_bal(self, amount):
-        now = datetime.datetime.now()
-        self.dates.update({now : f"Remove Balance: {amount}"})
         if self.validate_int(amount):
-            self.balance -= amount
-            return True
+            if amount > 0 and self.balance > amount and amount < self.withdrawlim:
+                self.balance -= amount
+                return {"Sucess": True}
+            else:
+                return {"Sucess": False}
         else:
-            return False
-    def change_type(self, accountType):
-        now = datetime.datetime.now()
-        self.dates.update({now : "Change Account Type"})
-        if self.validate_string(accountType):
-            if (accountType == "Savings" or "Checking" or "Credit"):
-                self.accountType = accountType
-                return True
-        else:
-            return False
-    def get_withdraw(self):
-        return self.withdrawlim
-    def set_withdraw(self, int):
-        self.withdrawlim = int
-    def get_bal(self):
-        return self.balance
-    def get_accountType(self):
-        return self.accountType
-    def get_accountNumber(self):
-        return self.account_num
-    def print_acc(self):
-        return f"[UserID: {self._User_Id} , Account Number: {self.account_num} , Account Type: {self.accountType} , Balance: {self.balance} , WithDraw Limit: {self.withdrawlim} , Dates Altered: {self.dates}]"
+            return {"Sucess": False}
+    def get_information(self):
+        response = supabase.table("Accounts").select("*").eq("UserID" , self._User_Id).eq("Account-Type" , self.accountType).eq("Account-Number", self.account_num).execute()
+        return response.data[0]
+    def write_DB(self):
+        now = datetime.now(timezone.utc).isoformat()
+        self.dates.append(now)
+        response = supabase.table("Accounts").update({"Dates-Accessed" : self.dates , "Balance": self.balance , "Withdraw-Limit": self.withdrawlim}).eq("Account-Type" , self.accountType).eq("UserID" , self._User_Id).eq("Account-Number" , self.account_num).execute()
 
 
 '''
 Testing
-imported_account = "[UserID: 765243897 , Account Number: 3165 , Account Type: Credit , Balance: 854000 , Withdraw Limit: 300 , Dates Accessed: ]"
-my_account = account(879657889 , "Checking")
-print(my_account.print_acc())
-my_account.add_bal(6000)
-my_account.remove_bal(1000)
-my_account.change_type("Savings")
-print(my_account.print_acc())
-print(my_account.get_bal())
-print(my_account.get_accountType())
-print(my_account.get_accountNumber())
-my_account.account_import(imported_account)
-print(my_account.print_acc())
+acct = account(user_id=12345678,accountNum= 7263, accountType="Checking")
+print(acct.get_information())
+print(acct.add_bal(600))
+print(acct.remove_bal(90))
+acct.update_withdraw(500)
+print(acct.remove_bal(100))
+acct.write_DB()
+print(acct.get_information())
 '''
