@@ -23,7 +23,8 @@ class Admin:
         self.AdminID = AdminID
         self.total_in_acc = 0.0
         self.total_credit = 0.0
-        self.last_updated = datetime.now(timezone.utc).isoformat()
+        self.last_updated = []
+        self.last_updated.append(datetime.now(timezone.utc).isoformat())
         self.new_Admin_entry(newAdmin)
     def load_admin(self, userName, password):
         response = supabase.table("Admin").select("*").eq("UserName" , userName).eq("Password" , password).execute()
@@ -77,7 +78,7 @@ class Admin:
         return {"Customer": response.data[0] , "Accounts": response2.data}    
     #function to reset credentials for admin
     def reset_password(self, userName, AdminID , new_password):
-        response = supabase.table("Admin").update({"Password" , new_password}).eq("UserName" , userName).eq("AdminID" , AdminID).execute()
+        response = supabase.table("Admin").update({"Password" : new_password}).eq("UserName" , userName).eq("AdminID" , AdminID).execute()
     #function to cloes accounts
     def close_all_accounts(self, userID):
         response = supabase.table("Accounts").delete().eq("UserID" , self._User_ID).execute()
@@ -92,12 +93,11 @@ class Admin:
 
 '''
 Testing
-
 admin = Admin("Ilikethegreens" , "ihategreens3232" , 7869 , 1)
 print(admin.See_DB_account())
-print(admin.total_in_bank)
+print(admin.total_in_bank())
 admin.close_customer(12345678)
-print(admin.total_credit())
+print(admin.total_credit_lent())
 admin.reset_password("Ilikethegreens" , 7869 , "Iamtheonly6767")
 admin.write_admin()
 '''
