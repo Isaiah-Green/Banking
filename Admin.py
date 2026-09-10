@@ -40,7 +40,7 @@ class Admin:
                 "Password": self.password,
                 "AdminID": self.AdminID,
                 "Total-in-Bank": self.total_in_acc,
-                "Total-Credit": self.totl_credit,
+                "Total-Credit": self.total_credit,
                 "Last-Updated": self.last_updated}
             ).execute()
     def See_DB_customer(self):
@@ -92,18 +92,12 @@ class Admin:
 
 '''
 Testing
-admin = Admin("ilikegrapes0" , "ihategrapes0" , 1234 , "customer_testing.txt" , "testing_account.txt" , "aadmin_testing.txt")
-admin.See_DB_customer()
-print(admin.write_admin())
-print("---------------------------------------------")
-admin.See_DB_account()
-print(admin.total_credit_lent())
-print(admin.total_in_bank())
-print("---------------------------------------------")
-admin.lookup_user(876546756)
-print(admin.close_customer(876546756))
-print("---------------------------------------------")
-admin.See_DB_customer()
-print("---------------------------------------------")
-admin.See_DB_account()
+
+admin = Admin("Ilikethegreens" , "ihategreens3232" , 7869 , 1)
+print(admin.See_DB_account())
+print(admin.total_in_bank)
+admin.close_customer(12345678)
+print(admin.total_credit())
+admin.reset_password("Ilikethegreens" , 7869 , "Iamtheonly6767")
+admin.write_admin()
 '''
