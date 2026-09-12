@@ -1,0 +1,18 @@
+List of Links and other pages needed - 
+ - Home Page(index)
+  -User Login
+  -User Register
+ - Error pages
+  - Homepage
+ - User Login Page
+  - user Account
+ - User Register Page
+  - user account
+ - User Account Page
+  - user seetings
+ - User Settings
+  - user account
+ - Admin Page
+  - admin settings 
+ - Admin Settings
+ - admin page
