@@ -10,6 +10,7 @@ List of Links and other pages needed -
   - user account
  - User Account Page
   - user seetings
+  - Money Mangagement page 
  - User Settings
   - user account
  - Admin Page

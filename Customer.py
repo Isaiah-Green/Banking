@@ -25,12 +25,16 @@ class Customer:
     #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score: ]  
     def load_customer(self , userName = None, password = None):
         response = supabase.table("Customer-List").select("*").eq("UserName" , userName).eq("Password" , password).execute()
-        self.User_ID = response.data[0]["UserID"]
-        self.User_Name = response.data[0]["UserName"]
-        self.password = response.data[0]["Password"]
-        self.credit_borrow = response.data[0]["Credit-Borrowed"]
-        self.credit_score = response.data[0]["Credit-Score"]
-    ####Functions that All Users will have access to
+        if(response ==  None):
+            return {"Success": False}
+        else:
+            self.User_ID = response.data[0]["UserID"]
+            self.User_Name = response.data[0]["UserName"]
+            self.password = response.data[0]["Password"]
+            self.credit_borrow = response.data[0]["Credit-Borrowed"]
+            self.credit_score = response.data[0]["Credit-Score"]
+            return {"Sucess": True}
+        ####Functions that All Users will have access to
     def open_account(self , accountType, withdrawLim):
         response = supabase.table("Accounts").insert({
             "UserID": self.User_ID,
