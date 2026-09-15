@@ -21,7 +21,7 @@ class Customer:
             self.User_ID = userID
         self.credit_borrow = 0.0
         self.credit_score = 0
-        self.add_entry(entry_number)
+        self.entry = self.add_entry(entry_number)
     #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score: ]  
     def load_customer(self , userName = None, password = None):
         response = supabase.table("Customer-List").select("*").eq("UserName" , userName).eq("Password" , password).execute()
@@ -52,6 +52,10 @@ class Customer:
                 "Credit-Borrowed": self.credit_borrow,
                 "Credit-Score": self.credit_score
             }).execute()
+            if not response:
+                return {"Sucess": False}
+            else:
+                return{"Sucess": True}
         else:
             return 
     def close_account(self, accountNum, accountType):

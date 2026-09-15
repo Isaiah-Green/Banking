@@ -11,6 +11,12 @@ def home():
 @app.route("/UserLogin.html")
 def LoginPage():
      return render_template('UserLogin.html')
+@app.route("/Account.html")
+def AccountPage():
+     return render_template('Account.html')
+@app.route('/UserRegister.html')
+def RegisterPage():
+     return render_template('UserRegister.html')
 @app.route('/api/user-action' , methods=['POST'])
 def handle_action():
         data = request.get_json()
@@ -25,5 +31,13 @@ def handle_action():
                 return jsonify({"Sucess": True, "msg": "Login Sucessful"})
             else:
                 return jsonify({"Sucess": False, "meg": "Sorry Login Could Not be Processed , please Try again."})
+        if action == 'register':
+            cus = Customer(entry_number=1)
+            response = cus.entry
+            if response["Success"]:
+                 return jsonify({"Sucess": True , "msg": "User Registration Approved"})
+            else:
+                return jsonify({"Sucess": False, "msg": "User Could Not be registered"})
+             
 if __name__ == "__main__":
     app.run(host="0.0.0.0" , port=8000, debug=True)
