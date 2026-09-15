@@ -25,8 +25,8 @@ class Customer:
     #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score: ]  
     def load_customer(self , userName = None, password = None):
         response = supabase.table("Customer-List").select("*").eq("UserName" , userName).eq("Password" , password).execute()
-        if(response ==  None):
-            return {"Success": False}
+        if not response.data:
+            return{"Sucess": False}
         else:
             self.User_ID = response.data[0]["UserID"]
             self.User_Name = response.data[0]["UserName"]
