@@ -20,7 +20,6 @@ def RegisterPage():
 @app.route('/api/user-action' , methods=['POST'])
 def handle_action():
         data = request.get_json()
-        print(data)
         action = data.get('action')
         username = data.get('UserName')
         password = data.get('Password')
@@ -30,11 +29,11 @@ def handle_action():
             if response["Sucess"]:
                 return jsonify({"Sucess": True, "msg": "Login Sucessful"})
             else:
-                return jsonify({"Sucess": False, "meg": "Sorry Login Could Not be Processed , please Try again."})
-        if action == 'register':
-            cus = Customer(entry_number=1)
-            response = cus.entry
-            if response["Success"]:
+                return jsonify({"Sucess": False, "msg": "Sorry Login Could Not be Processed , please Try again."})
+        elif action == 'register':
+            cus = Customer(username= username , password= password,entry_number=1)
+            response = cus.get_entry()
+            if response["Sucess"]:
                  return jsonify({"Sucess": True , "msg": "User Registration Approved"})
             else:
                 return jsonify({"Sucess": False, "msg": "User Could Not be registered"})

@@ -12,7 +12,7 @@ key: str = os.environ.get("DATABASE_API_SECRET")
 supabase: Client = create_client(url, key)
 
 class Customer:
-    def __init__(self , username=None, password= None, userID = None , entry_number = 0):
+    def __init__(self , username = None, password = None, userID = None , entry_number = 0):
         self.User_Name = username
         self.password = password
         if userID == None:
@@ -22,6 +22,7 @@ class Customer:
         self.credit_borrow = 0.0
         self.credit_score = 0
         self.entry = self.add_entry(entry_number)
+        self.entry_now = self.entry
     #Loaded_customer = [UserID:  , UserName:    , Password:  , Credit Borrowed:   , Credit Score: ]  
     def load_customer(self , userName = None, password = None):
         response = supabase.table("Customer-List").select("*").eq("UserName" , userName).eq("Password" , password).execute()
@@ -70,6 +71,8 @@ class Customer:
     def view_one_account(self, accountNum):
          response = supabase.table("Accounts").select("*").eq("UserID", self._User_ID).eq("Account=Number" , accountNum).execute()
          return response.data
+    def get_entry(self):
+        return self.entry_now
     ##for testing currently
 
     
